@@ -6,7 +6,7 @@ module.exports = {
         //serviceWorker: './modules/Core/js/serviceWorker.js',
     }, output: {
         path: path.resolve(__dirname, './dist'),
-        publicPath: "/",
+        //publicPath: "/",
         filename: '[name].js',
         chunkFilename: '[name].[id].js'
     },

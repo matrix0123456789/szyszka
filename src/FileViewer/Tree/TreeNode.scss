@@ -1,0 +1,30 @@
+:host {
+    display: block;
+
+}
+
+.title {
+    margin: 5px;
+
+    &:hover {
+        background: rgba(#000000, .05);
+    }
+
+    .openButton {
+        &::before {
+            content: '';
+            border: 1px black solid;
+            border-top-color: transparent;
+            border-left-color: transparent;
+            width: .5em;
+            height: .5em;
+            display: inline-block;
+            transform: rotate(45deg);
+        }
+    }
+}
+
+slot {
+    margin-left: 10px;
+    display: block;
+}

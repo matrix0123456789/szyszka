@@ -1,0 +1,11 @@
+:host {
+
+    section.mainView {
+        flex: 1 1 auto;
+    }
+
+    aside {
+        border-left: 1px solid black;
+        flex: 0 1 250px;
+    }
+}

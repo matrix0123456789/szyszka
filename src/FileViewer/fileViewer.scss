@@ -1,11 +1,15 @@
 :host {
+    display: flex;
+    width: 100%;
 
     section.mainView {
         flex: 1 1 auto;
+        overflow: scroll;
     }
 
     aside {
         border-left: 1px solid black;
-        flex: 0 1 250px;
+        flex: 0 0 250px;
+        overflow: scroll;
     }
 }

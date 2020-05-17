@@ -3,10 +3,15 @@ import css from "./TreeNode.scss";
 export class TreeNode extends HTMLElement {
     constructor(node) {
         super();
-        this.dbg = node;
+        this.node = node;
         const shadow = this.attachShadow({mode: 'open'});
         shadow.addChild('style', {text: css[0][1]});
-        shadow.addChild('div.title', {text: node.name}).addChild('.openButton');
+        let title = shadow.addChild('div.title');
+        title.onclick=()=>{
+            this.dispatchEvent(new CustomEvent('selected',{bubbles : true}))
+        }
+        title.addChild('.openButton');
+        title.append(node.name);
         shadow.addChild('slot')
         for (let child of node.children) {
             this.append(new TreeNode(child));

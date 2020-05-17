@@ -7,8 +7,8 @@ export class TreeNode extends HTMLElement {
         const shadow = this.attachShadow({mode: 'open'});
         shadow.addChild('style', {text: css[0][1]});
         let title = shadow.addChild('div.title');
-        title.onclick=()=>{
-            this.dispatchEvent(new CustomEvent('selected',{bubbles : true}))
+        title.onclick = () => {
+            this.dispatchEvent(new CustomEvent('selected', {bubbles: true}))
         }
         title.addChild('.openButton');
         title.append(node.name);

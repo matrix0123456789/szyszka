@@ -10,6 +10,18 @@
     aside {
         border-left: 1px solid black;
         flex: 0 0 250px;
-        overflow: scroll;
+        display: flex;
+        flex-direction: column;
+
+        .elementsTree{
+
+            flex: 0 0 50%;
+            overflow: scroll;
+        }
+        .properties{
+
+            flex: 0 0 50%;
+            overflow: scroll;
+        }
     }
 }

@@ -1,6 +1,7 @@
 import css from "./fileViewer.scss";
 import {TreeNode} from "./Tree/TreeNode";
 import {ImageCanvas} from "./imageCanvas";
+import {NodeInfo} from "./nodeInfo";
 
 console.log(css[0][1])
 
@@ -21,7 +22,14 @@ export class FileViewer extends HTMLElement {
             this.selected = [e.target];
             this.imageCanvas.selected = this.selected.map(x => x.node);
             this.imageCanvas.render();
+            this.regenerateProperties();
         })
+        this.propertes = aside.addChild('section.properties');
+    }
+
+    regenerateProperties() {
+        this.propertes.children.removeAll();
+        this.propertes.append(new NodeInfo(this.selected.map(x => x.node)))
     }
 
     set file(value) {

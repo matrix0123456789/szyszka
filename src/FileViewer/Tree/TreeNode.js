@@ -10,6 +10,9 @@ export class TreeNode extends HTMLElement {
         title.onclick = () => {
             this.dispatchEvent(new CustomEvent('selected', {bubbles: true, detail:[this.node]}))
         }
+        title.onmouseenter = () => {
+            this.dispatchEvent(new CustomEvent('hover', {bubbles: true, detail:[this.node]}))
+        }
         title.addChild('.openButton');
         title.append(node.name);
         shadow.addChild('slot')

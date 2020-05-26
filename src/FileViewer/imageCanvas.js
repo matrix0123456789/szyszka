@@ -2,6 +2,7 @@ export class ImageCanvas extends HTMLElement {
     constructor(file) {
         super();
         this.selected = [];
+        this.hover = [];
         console.log(file);
         this._file = file;
         this._allNodes = this.getAllNodes(this._file.tree);
@@ -16,6 +17,12 @@ export class ImageCanvas extends HTMLElement {
             let clicked = this.findNodeOfPoint({x: e.clientX, y: e.clientY});
             if (clicked) {
                 this.dispatchEvent(new CustomEvent('selected', {bubbles: true, detail: [clicked]}))
+            }
+        }
+        this.canvas.onmousemove = e => {
+            let hovered = this.findNodeOfPoint({x: e.clientX, y: e.clientY});
+            if (hovered) {
+                this.dispatchEvent(new CustomEvent('hover', {bubbles: true, detail: [hovered]}))
             }
         }
         setTimeout(() => this.render(true), 2000);
@@ -58,9 +65,16 @@ export class ImageCanvas extends HTMLElement {
     }
 
     renderNodeHelper(node) {
-
         if (this.selected.includes(node)) {
             this.ctx.beginPath();
+            this.ctx.rect(node.rect.left, node.rect.top, node.rect.width, node.rect.height);
+            this.ctx.stroke();
+            this.ctx.strokeStyle = "#444";
+            this.ctx.closePath();
+        }
+        if (this.hover.includes(node)) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = "#44d";
             this.ctx.rect(node.rect.left, node.rect.top, node.rect.width, node.rect.height);
             this.ctx.stroke();
             this.ctx.closePath();

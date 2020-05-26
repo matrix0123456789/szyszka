@@ -45,7 +45,7 @@ export class PsdNode {
     }
 
     get canDownloadImage() {
-        return Boolean(this._image);
+        return Boolean(this.image);
     }
 
     async downloadImage() {
@@ -55,5 +55,32 @@ export class PsdNode {
         canvas.getContext('2d').putImageData(this.image, 0, 0);
         let blob = new Promise(resolve => canvas.toBlob(resolve))
         document.create('a', {href: URL.createObjectURL(await blob), download: this.name + '.png'}).click();
+    }
+
+    get css() {
+        let ret = [];
+        ret.push({name: 'left', value: this._node.left + 'px'});
+        ret.push({name: 'top', value: this._node.top + 'px'});
+        const typeTool = this._node.get('typeTool');
+        if (typeTool) {
+            if (typeTool.fonts) {
+                ret.push({name: 'font-family', value: typeTool.fonts().join(', ')});
+                ret.push({name: 'font-size', value: (typeTool.sizes()[0]) + "pt"});
+                ret.push({name: 'color', value: "rgba(" + (typeTool.colors()[0].join(', ')) + ")"});
+                ret.push({name: 'text-align', value: typeTool.alignment()[0]});
+            }
+        } else {
+            ret.push({name: 'width', value: this._node.width + 'px'});
+            ret.push({name: 'height', value: this._node.height + 'px'});
+        }
+        return ret;
+    }
+
+    get text() {
+        const typeTool = this._node.get('typeTool');
+        if (typeTool && typeTool.textValue)
+            return typeTool.textValue;
+        else
+            return null;
     }
 }

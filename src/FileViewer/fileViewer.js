@@ -9,6 +9,7 @@ export class FileViewer extends HTMLElement {
     constructor(file) {
         super();
         this.selected = [];
+        this.hover = [];
         this.dbg = file;
         const shadow = this.attachShadow({mode: 'open'});
         shadow.addChild('style', {text: css[0][1]});
@@ -22,6 +23,10 @@ export class FileViewer extends HTMLElement {
             this.imageCanvas.selected = this.selected = e.detail;
             this.imageCanvas.render();
             this.regenerateProperties();
+        })
+        shadow.addEventListener('hover', e => {
+            this.imageCanvas.hover = this.hover = e.detail;
+            this.imageCanvas.render();
         })
         this.propertes = aside.addChild('section.properties');
     }

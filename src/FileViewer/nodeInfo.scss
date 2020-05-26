@@ -1,0 +1,25 @@
+@import "../Common/commonControls";
+
+:host {
+    > * {
+        display: block;
+    }
+
+    style {
+        display: none;
+    }
+
+    .css {
+        border: 1px black solid;
+        background: #ffffff;
+        padding: 5px;
+
+        .css-rule {
+            display: block;
+
+            > * {
+                display: inline;
+            }
+        }
+    }
+}

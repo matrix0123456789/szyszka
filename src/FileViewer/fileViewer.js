@@ -19,8 +19,7 @@ export class FileViewer extends HTMLElement {
         this.elementsTree = aside.addChild('section.elementsTree');
         this.elementsTree.append(new TreeNode(file.tree))
         shadow.addEventListener('selected', e => {
-            this.selected = [e.target];
-            this.imageCanvas.selected = this.selected.map(x => x.node);
+            this.imageCanvas.selected = this.selected = e.detail;
             this.imageCanvas.render();
             this.regenerateProperties();
         })
@@ -29,7 +28,7 @@ export class FileViewer extends HTMLElement {
 
     regenerateProperties() {
         this.propertes.children.removeAll();
-        this.propertes.append(new NodeInfo(this.selected.map(x => x.node)))
+        this.propertes.append(new NodeInfo(this.selected))
     }
 
     set file(value) {

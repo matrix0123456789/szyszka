@@ -7,17 +7,18 @@ export class ImageCanvas extends HTMLElement {
         this._allNodes = this.getAllNodes(this._file.tree);
         const shadow = this.attachShadow({mode: 'open'});
         this.canvas = shadow.addChild('canvas');
+        this._imageCanvas = document.createElement('canvas')
         this.ctx = this.canvas.getContext('2d');
-        this.canvas.width = file.size.width;
-        this.canvas.height = file.size.height;
+        this._imageCtx = this._imageCanvas.getContext('2d');
+        this._imageCanvas.width = this.canvas.width = file.size.width;
+        this._imageCanvas.height = this.canvas.height = file.size.height;
         this.canvas.onclick = e => {
             let clicked = this.findNodeOfPoint({x: e.clientX, y: e.clientY});
             if (clicked) {
-                this.selected = [clicked];
-                this.render();
+                this.dispatchEvent(new CustomEvent('selected', {bubbles: true, detail: [clicked]}))
             }
         }
-        setTimeout(() => this.render(), 2000);
+        setTimeout(() => this.render(true), 2000);
     }
 
     getAllNodes(node) {
@@ -26,11 +27,18 @@ export class ImageCanvas extends HTMLElement {
         return ret;
     }
 
-    render() {
-        this.renderNode(this._file.tree);
+    render(fullRender = false) {
+        if (fullRender) {
+            this.renderNodeImage(this._file.tree);
+            this._imageCtx.clearRect(0, 0, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
+        }
+
+        this.ctx.clearRect(0, 0, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
+        this.ctx.drawImage(this._imageCanvas, 0, 0)
+        this.renderNodeHelper(this._file.tree);
     }
 
-    renderNode(node) {
+    renderNodeImage(node) {
         const isVisible = (node._node.layer.visible !== false);
         const isMask = node._node.layer.mask && node._node.layer.mask.width > 0;
         const isRenderable = isVisible && !isMask && node.image && node._node.layer.opacity == 255 && !node._node.layer.clipped && node._node.layer.blendMode && node._node.layer.blendMode.mode == 'normal'
@@ -40,19 +48,26 @@ export class ImageCanvas extends HTMLElement {
                 tmpCanvas.width = node.rect.width;
                 tmpCanvas.height = node.rect.height;
                 tmpCanvas.getContext('2d').putImageData(node.image, 0, 0);
-                this.ctx.drawImage(tmpCanvas, node.rect.left, node.rect.top);
-                console.log(node._node.layer)
-                if (this.selected.includes(node)) {
-                    this.ctx.beginPath();
-                    this.ctx.rect(node.rect.left, node.rect.top, node.rect.width, node.rect.height);
-                    this.ctx.stroke();
-                    this.ctx.closePath();
-                }
+                this._imageCtx.drawImage(tmpCanvas, node.rect.left, node.rect.top);
             }
 
             for (let child of Array.from(node.children).reverse()) {
-                this.renderNode(child);
+                this.renderNodeImage(child);
             }
+        }
+    }
+
+    renderNodeHelper(node) {
+
+        if (this.selected.includes(node)) {
+            this.ctx.beginPath();
+            this.ctx.rect(node.rect.left, node.rect.top, node.rect.width, node.rect.height);
+            this.ctx.stroke();
+            this.ctx.closePath();
+        }
+
+        for (let child of Array.from(node.children).reverse()) {
+            this.renderNodeHelper(child);
         }
     }
 

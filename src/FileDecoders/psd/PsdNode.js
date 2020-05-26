@@ -28,7 +28,7 @@ export class PsdNode {
 
             if (this._node.layer && this._node.layer.image) {
                 try {
-                    var pixelData=this._node.layer.image.pixelData;
+                    var pixelData = this._node.layer.image.pixelData;
                     var imageData = new ImageData(this.rect.width, this.rect.height)
                     if (pixelData.length === imageData.data.length) {
                         for (let i = 0; i < pixelData.length; i++) {
@@ -42,5 +42,18 @@ export class PsdNode {
             }
         }
         return this._image;
+    }
+
+    get canDownloadImage() {
+        return Boolean(this._image);
+    }
+
+    async downloadImage() {
+        let canvas = document.createElement('canvas');
+        canvas.width = this.image.width;
+        canvas.height = this.image.height;
+        canvas.getContext('2d').putImageData(this.image, 0, 0);
+        let blob = new Promise(resolve => canvas.toBlob(resolve))
+        document.create('a', {href: URL.createObjectURL(await blob), download: this.name + '.png'}).click();
     }
 }

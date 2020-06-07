@@ -3,8 +3,6 @@ import {TreeNode} from "./Tree/TreeNode";
 import {ImageCanvas} from "./imageCanvas";
 import {NodeInfo} from "./nodeInfo";
 
-console.log(css[0][1])
-
 export class FileViewer extends HTMLElement {
     constructor(file) {
         super();
@@ -27,6 +25,9 @@ export class FileViewer extends HTMLElement {
         shadow.addEventListener('hover', e => {
             this.imageCanvas.hover = this.hover = e.detail;
             this.imageCanvas.render();
+        })
+        shadow.addEventListener('renderRequest', e => {
+            this.imageCanvas.render(e.detail);
         })
         this.propertes = aside.addChild('section.properties');
     }

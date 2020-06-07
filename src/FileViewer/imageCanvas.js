@@ -3,7 +3,6 @@ export class ImageCanvas extends HTMLElement {
         super();
         this.selected = [];
         this.hover = [];
-        console.log(file);
         this._file = file;
         this._allNodes = this.getAllNodes(this._file.tree);
         const shadow = this.attachShadow({mode: 'open'});
@@ -46,16 +45,30 @@ export class ImageCanvas extends HTMLElement {
     }
 
     renderNodeImage(node) {
-        const isVisible = (node._node.layer.visible !== false);
+        const isVisible = node.isVisible;
         const isMask = node._node.layer.mask && node._node.layer.mask.width > 0;
-        const isRenderable = isVisible && !isMask && node.image && node._node.layer.opacity == 255 && !node._node.layer.clipped && node._node.layer.blendMode && node._node.layer.blendMode.mode == 'normal'
+        const isRenderable = isVisible && !isMask && node.image && node._node.layer.opacity == 255 && node._node.layer.blendMode && node._node.layer.blendMode.mode == 'normal'
+        if (node._node.layer.clipped)
+            console.log('clipped', node);
+
         if (isVisible) {
             if (isRenderable) {
                 const tmpCanvas = document.createElement('canvas');
                 tmpCanvas.width = node.rect.width;
                 tmpCanvas.height = node.rect.height;
                 tmpCanvas.getContext('2d').putImageData(node.image, 0, 0);
-                this._imageCtx.drawImage(tmpCanvas, node.rect.left, node.rect.top);
+                const clippingMask = node._node.clippingMask();
+                if (clippingMask) {
+                    let clippedRect = {
+                        left: Math.max(clippingMask.left, node._node.left),
+                        top: Math.max(clippingMask.top, node._node.top),
+                        bottom: Math.min(clippingMask.bottom, node._node.bottom),
+                        right: Math.min(clippingMask.right, node._node.right)
+                    }
+                    this._imageCtx.drawImage(tmpCanvas, clippedRect.left-node.rect.left, clippedRect.top-node.rect.top, clippedRect.right-clippedRect.left, clippedRect.bottom-clippedRect.top, clippedRect.left, clippedRect.top, clippedRect.right-clippedRect.left, clippedRect.bottom-clippedRect.top);
+                } else {
+                    this._imageCtx.drawImage(tmpCanvas, node.rect.left, node.rect.top);
+                }
             }
 
             for (let child of Array.from(node.children).reverse()) {
@@ -86,11 +99,20 @@ export class ImageCanvas extends HTMLElement {
     }
 
     findNodeOfPoint(point) {
-        for (let node of this._allNodes) {
-            if (point.x >= node.rect.left && point.x <= node.rect.left + node.rect.width && point.y >= node.rect.top && point.y <= node.rect.top + node.rect.height)
-                return node;
+        return this.findNodeOfPointByNode(point, this._file.tree);
+    }
+
+    findNodeOfPointByNode(point, node) {
+        if (!node.isVisible) return null;
+        for (let child of node.children) {
+            let result = this.findNodeOfPointByNode(point, child);
+            if (result)
+                return result;
         }
-        return null;
+        if (node.isVisible && point.x >= node.rect.left && point.x <= node.rect.left + node.rect.width && point.y >= node.rect.top && point.y <= node.rect.top + node.rect.height)
+            return node;
+        else
+            return null;
     }
 }
 

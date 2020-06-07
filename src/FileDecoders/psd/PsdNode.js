@@ -4,6 +4,7 @@ export class PsdNode {
         this.name = node.name;
         this._imageLoaded = false;
         this._image = null;
+        this.isVisible = (node.layer.visible !== false)
     }
 
     get rect() {
@@ -28,8 +29,8 @@ export class PsdNode {
 
             if (this._node.layer && this._node.layer.image) {
                 try {
-                    var pixelData = this._node.layer.image.pixelData;
-                    var imageData = new ImageData(this.rect.width, this.rect.height)
+                    let pixelData = this._node.layer.image.pixelData;
+                    let imageData = new ImageData(this.rect.width, this.rect.height)
                     if (pixelData.length === imageData.data.length) {
                         for (let i = 0; i < pixelData.length; i++) {
                             imageData.data[i] = pixelData[i];

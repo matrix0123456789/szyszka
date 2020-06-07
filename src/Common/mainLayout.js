@@ -1,5 +1,5 @@
 import css from "./mainLayout.scss"
-import {fileDecoratedFactory} from "../FileDecoders/fileDecoratedFactory";
+import {eventDecoratedFactory, fileDecoratedFactory} from "../FileDecoders/fileDecoratedFactory";
 import {FileViewer} from "../FileViewer/fileViewer";
 
 export class MainLayout extends HTMLElement {
@@ -9,7 +9,12 @@ export class MainLayout extends HTMLElement {
         shadow.addChild('style', {text: css[0][1]});
         const startPage = shadow.addChild('start-page');
         startPage.addEventListener('selectfile', async e => {
-            let file = await fileDecoratedFactory(e.detail);
+            let file;
+            if (e.detail instanceof File)
+                file = await fileDecoratedFactory(e.detail);
+            else
+                file = await eventDecoratedFactory(e.detail);
+
             startPage.remove();
             shadow.append(new FileViewer(file))
         });

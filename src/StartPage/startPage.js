@@ -5,7 +5,7 @@ export class StartPage extends HTMLElement {
         super();
         const shadow = this.attachShadow({mode: 'open'});
         shadow.addChild('style', {text: css[0][1]});
-        shadow.addChild("h1", {text: "Gruszka"});
+        shadow.addChild("h1", {text: "Szyszka"});
         const openButton = shadow.addChild('button', {text: 'open'});
         openButton.onclick = this.openFileDialog.bind(this);
 
@@ -28,7 +28,7 @@ export class StartPage extends HTMLElement {
     onDrop(e) {
         e.stopPropagation();
         e.preventDefault();
-        this.dispatchEvent(new CustomEvent('selectfile', {detail: e}))
+        this.dispatchEvent(new CustomEvent('selectfile', {detail: e.dataTransfer.files[0]}))
     }
 }
 

@@ -1,1 +1,6 @@
 @import "../Common/commonControls";
+
+:host {
+    flex: 1 1 100%;
+    text-align: center;
+}

@@ -6,11 +6,12 @@ export class NodeInfo extends HTMLElement {
 
         const shadow = this.attachShadow({mode: 'open'});
         for (let node of nodes) {
-           // shadow.append(JSON.stringify(node._node.export()));
+            // shadow.append(JSON.stringify(node._node.export()));
             shadow.addChild('style', {text: css[0][1]});
             console.log(node);
-            if(node.text!==null){
-                shadow.addChild('.text', {text:node.text});
+            shadow.addChild('.name', {text: node.name})
+            if (node.text !== null) {
+                shadow.addChild('.text', {text: node.text});
             }
             shadow.addChild('.css', {
                 children: node.css.map(x => ({
@@ -22,6 +23,15 @@ export class NodeInfo extends HTMLElement {
                 let downloadImage = shadow.addChild('button.downloadImage', {text: 'Download'});
                 downloadImage.onclick = () => node.downloadImage();
             }
+            const visibilityLabel = shadow.addChild('label.visibility');
+            const visibility = visibilityLabel.addChild('input', {type: 'checkbox'});
+            visibilityLabel.append('visible')
+
+            visibility.checked = node.isVisible;
+            visibility.onchange = e => {
+                node.isVisible = visibility.checked;
+                this.dispatchEvent(new CustomEvent('renderRequest', {bubbles: true, detail: true}))
+            };
         }
     }
 }

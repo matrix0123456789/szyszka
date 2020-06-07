@@ -19,7 +19,7 @@ export class ImageCanvas extends HTMLElement {
             }
         }
         this.canvas.onmousemove = e => {
-            let hovered = this.findNodeOfPoint({x: e.clientX, y: e.clientY});
+            let hovered = this.findNodeOfPoint({x: e.pageX+this.parentElement.scrollLeft, y: e.pageY+this.parentElement.scrollTop});
             if (hovered) {
                 this.dispatchEvent(new CustomEvent('hover', {bubbles: true, detail: [hovered]}))
             }
@@ -48,8 +48,6 @@ export class ImageCanvas extends HTMLElement {
         const isVisible = node.isVisible;
         const isMask = node._node.layer.mask && node._node.layer.mask.width > 0;
         const isRenderable = isVisible && !isMask && node.image && node._node.layer.opacity == 255 && node._node.layer.blendMode && node._node.layer.blendMode.mode == 'normal'
-        if (node._node.layer.clipped)
-            console.log('clipped', node);
 
         if (isVisible) {
             if (isRenderable) {
